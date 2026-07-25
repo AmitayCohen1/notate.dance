@@ -123,7 +123,8 @@ await step("parameters page still interactive", async () => {
   await page.goto(base + "/", { waitUntil: "networkidle" });
   await page.getByRole("button", { name: /Cast chance/ }).click();
   await page.getByRole("tab", { name: /Eshkol/ }).click();
-  await page.getByRole("button", { name: "Numbers" }).click();
+  // two mode switches exist by design (hero + sticky header) — use the header one
+  await page.locator("header").getByRole("button", { name: "Numbers" }).click();
   await page.waitForTimeout(400);
 });
 

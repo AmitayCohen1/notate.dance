@@ -39,7 +39,7 @@ const ViewerCanvas = forwardRef<
       ctx.moveTo(cx - 110, floorY);
       ctx.lineTo(cx + 110, floorY);
       ctx.stroke();
-      const scale = 80;
+      const scale = 92;
       const hipY = floorY - scale * 1.15;
       const shY = hipY - scale * 0.95;
       const headY = shY - scale * 0.36;

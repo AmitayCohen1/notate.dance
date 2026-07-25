@@ -3,8 +3,8 @@
 import { LIMBS, Mode, PhraseEvent, ewOf, limbLabel, starts, totalBeats } from "./model";
 
 const ROW_H = 58;
-const LEFT = 150;
-const COL_W = 66;
+const LEFT = 132;
+const COL_W = 58;
 const TOP = 38;
 
 export default function EWView({

@@ -32,12 +32,12 @@
   --secondary: #e7e5dc;
   --secondary-foreground: #24272f;
   --muted: #e9e7df;
-  --muted-foreground: #5b6068;
+  --muted-foreground: #454a52;
   --accent: #e3e0d5;
   --accent-foreground: #191c23;
   --destructive: #b23b22;
-  --border: #d8d5ca;
-  --input: #d8d5ca;
+  --border: #cdc9bc;
+  --input: #cdc9bc;
   --ring: #2b3ec4;
 
   --chart-1: #2b3ec4;
@@ -59,8 +59,8 @@
   --n-paper: #f4f2ec;
   --n-card: #fbfaf6;
   --n-ink: #14161b;
-  --n-soft: #4a4e58;
-  --n-faint: #9a9da3;
+  --n-soft: #3c4149;
+  --n-faint: #7e828a;
   --n-line: #cfccc0;
   --n-brand: #2b3ec4;
   --n-brand-soft: rgba(43, 62, 196, 0.12);
@@ -79,7 +79,7 @@
   --secondary: #1b1f27;
   --secondary-foreground: #e7ebe9;
   --muted: #191d25;
-  --muted-foreground: #98a2a0;
+  --muted-foreground: #b3bcba;
   --accent: #1d222b;
   --accent-foreground: #e7ebe9;
   --destructive: #f0604a;
@@ -105,8 +105,8 @@
   --n-paper: #0b0d12;
   --n-card: #12151c;
   --n-ink: #e7ebe9;
-  --n-soft: #97a3a0;
-  --n-faint: #5b656a;
+  --n-soft: #b0bab8;
+  --n-faint: #6f7a7e;
   --n-line: #2a313b;
   --n-brand: #5fe3d1;
   --n-brand-soft: rgba(95, 227, 209, 0.14);
@@ -204,8 +204,9 @@
   }
 
   /* Long-form teaching prose. */
+  /* Long-form teaching prose: body contrast, never washed out. */
   .prose-note {
-    @apply font-serif text-[1.15rem] leading-relaxed text-muted-foreground;
+    @apply text-foreground/92 font-serif text-[1.15rem] leading-relaxed;
   }
   .prose-note strong {
     @apply text-foreground font-semibold;

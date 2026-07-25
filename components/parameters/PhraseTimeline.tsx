@@ -7,8 +7,8 @@ export interface PlayheadHandle {
   setPlayhead: (t: number) => void;
 }
 
-const LEFT = 150;
-const COL_W = 76;
+const LEFT = 132;
+const COL_W = 64;
 const ROW_H = 58;
 const TOP = 38;
 
