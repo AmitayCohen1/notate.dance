@@ -1,7 +1,7 @@
 // Interaction smoke test: does the studio actually respond?
 import { chromium } from "playwright";
 
-const base = process.argv[2] || "http://localhost:3002";
+const base = process.argv[2] || "http://localhost:3003";
 const browser = await chromium.launch({ channel: "chrome" });
 const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
 const errors = [];

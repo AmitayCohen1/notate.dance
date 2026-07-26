@@ -173,17 +173,24 @@ export default function ParametersApp() {
 
       {/* ===================== THE INSTRUMENT: ONE MOVE ===================== */}
       <section id="move" className="bg-muted/35 scroll-mt-20 border-b">
-        <div className="mx-auto max-w-[1200px] space-y-6 px-6 py-14">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div className="max-w-[52ch] space-y-3">
-              <p className="text-muted-foreground flex items-baseline gap-2.5 font-mono text-[0.8rem] tracking-wide uppercase">
-                <span className="text-brand">00</span>
-                The thing every notation has to write
-              </p>
-              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">One move, five decisions</h2>
-              <p className="prose-note">
-                Set them here. Everything further down the page is the <em>same</em> five decisions, spelled out by four
-                different systems.
+        <div className="mx-auto max-w-[1200px] space-y-8 px-6 py-16">
+          {/* the same header signature every section uses */}
+          <div className="flex items-center gap-4">
+            <span className="text-brand font-mono text-[1.05rem] leading-none tabular-nums">00</span>
+            <span className="text-muted-foreground font-mono text-[0.78rem] tracking-[0.16em] whitespace-nowrap uppercase">
+              The thing every notation has to write
+            </span>
+            <span className="bg-border h-px flex-1" />
+          </div>
+
+          <div className="flex flex-wrap items-end justify-between gap-8">
+            <div className="max-w-[46ch] space-y-4">
+              <h2 className="text-[2.35rem] leading-[1.04] font-semibold tracking-tight sm:text-[3rem]">
+                One move, five decisions
+              </h2>
+              <p className="prose-note text-[1.28rem] leading-[1.55]">
+                Set them here. Everything below is the <em>same</em> five decisions, spelled out by four different
+                systems.
               </p>
             </div>
 
@@ -238,7 +245,7 @@ export default function ParametersApp() {
       </SectionNav>
 
       {/* ============================ SECTIONS ============================ */}
-      <main className="mx-auto max-w-[1200px] px-6">
+      <main>
         {/* ---------------------- 1. THE PHRASE ---------------------- */}
         <Section
           id="phrase"
@@ -267,10 +274,9 @@ export default function ParametersApp() {
               </p>
             </>
           }
-          aside={<Plate plate={PLATES.cunningham} imgClassName="max-h-[280px]" />}
+          chips={<ParamBadges set={CHIPSETS.lifeforms} mode={mode} />}
+          aside={<Plate plate={PLATES.cunningham} imgClassName="max-h-[300px]" />}
         >
-          <ParamBadges set={CHIPSETS.lifeforms} mode={mode} />
-
           <div className="flex flex-wrap items-center gap-3">
             <Button size="lg" onClick={() => setPlaying((p) => !p)} className="gap-2">
               {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
@@ -335,19 +341,20 @@ export default function ParametersApp() {
               long the movement lasts.
             </p>
           }
+          chips={<ParamBadges set={CHIPSETS.laban} mode={mode} />}
           aside={<Plate plate={PLATES.labanDirections} />}
+          tinted
         >
-          <ParamBadges set={CHIPSETS.laban} mode={mode} />
-
           <Card>
             <CardContent>
               <LabanLegend />
             </CardContent>
           </Card>
 
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,640px)_1fr] lg:items-start">
           <ScoreCard
-            center
             icon={Columns3}
+            center
             title={abs ? "Direction lattice + bare intervals" : "The staff"}
             hint={
               abs
@@ -363,8 +370,8 @@ export default function ParametersApp() {
           >
             <LabanView phrase={phrase} mode={mode} selected={selected} onSelect={setSelected} />
           </ScoreCard>
-
-          <Plate plate={abs ? PLATES.laban26 : PLATES.labanScore} className="md:max-w-[620px]" />
+          <Plate plate={abs ? PLATES.laban26 : PLATES.labanScore} />
+          </div>
         </Section>
 
         {/* ---------------------- 3. BENESH ---------------------- */}
@@ -397,10 +404,9 @@ export default function ParametersApp() {
               </p>
             </>
           }
+          chips={<ParamBadges set={CHIPSETS.benesh} mode={mode} />}
           aside={<Plate plate={PLATES.benesh} />}
         >
-          <ParamBadges set={CHIPSETS.benesh} mode={mode} />
-
           <ScoreCard
             icon={Rows3}
             title={abs ? "Picture plane — coordinates only" : "The stave"}
@@ -447,10 +453,10 @@ export default function ParametersApp() {
               <p>The score is a table — limbs down the side, time across the top. No picture of a body anywhere.</p>
             </>
           }
-          aside={<Plate plate={PLATES.eshkol} imgClassName="max-h-[320px]" />}
+          chips={<ParamBadges set={CHIPSETS.ew} mode={mode} />}
+          aside={<Plate plate={PLATES.eshkol} imgClassName="max-h-[330px]" />}
+          tinted
         >
-          <ParamBadges set={CHIPSETS.ew} mode={mode} />
-
           <div className="grid gap-6 lg:grid-cols-[1.45fr_1fr]">
             <ScoreCard
               icon={Grid3x3}
@@ -486,7 +492,7 @@ export default function ParametersApp() {
               what is left when you take the body away — the part every system agrees on.
             </p>
           }
-          aside={<Plate plate={PLATES.feuillet} imgClassName="max-h-[420px]" />}
+          aside={<Plate plate={PLATES.feuillet} imgClassName="max-h-[380px]" />}
         >
           <Card className="overflow-hidden py-0">
             <div className="score-scroll">
