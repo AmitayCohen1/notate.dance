@@ -121,11 +121,17 @@ await step("score survives a reload", async () => {
 
 await step("parameters page still interactive", async () => {
   await page.goto(base + "/", { waitUntil: "networkidle" });
+  // the hero's anchor should land on the scores
+  await page.getByRole("link", { name: /Read the four notations/ }).click();
+  await page.waitForTimeout(600);
   await page.getByRole("button", { name: /Cast chance/ }).click();
   await page.getByRole("tab", { name: /Eshkol/ }).click();
-  // two mode switches exist by design (hero + sticky header) — use the header one
-  await page.locator("header").getByRole("button", { name: "Numbers" }).click();
-  await page.waitForTimeout(400);
+  // "read as" lives in the score toolbar, beside the scores it rewrites
+  await page.getByRole("button", { name: "Numbers" }).click();
+  await page.waitForTimeout(500);
+  // in Numbers mode the badges quote the coordinates, not the body
+  const badge = await page.getByText("v ∈", { exact: false }).count();
+  if (!badge) throw new Error("switching to Numbers did not re-spell the score");
 });
 
 console.log("\nconsole errors:", errors.length ? JSON.stringify(errors.slice(0, 6), null, 2) : "none");

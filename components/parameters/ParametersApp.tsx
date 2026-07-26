@@ -187,9 +187,7 @@ export default function ParametersApp() {
 
   return (
     <div className="min-h-screen">
-      <SiteHeader current="params">
-        <ModeSwitch mode={mode} onChange={setMode} className="hidden md:flex" />
-      </SiteHeader>
+      <SiteHeader current="params" />
 
       {/* ============================ HERO ============================ */}
       <section className="border-b">
@@ -205,29 +203,26 @@ export default function ParametersApp() {
               and watch four notations rewrite it.
             </p>
             <div className="flex flex-wrap items-center gap-3">
+              <a
+                href="#scores"
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "h-11 gap-2 px-5 text-[1rem]",
+                )}
+              >
+                <Rows3 className="size-[18px]" />
+                Read the four notations
+              </a>
               <Link
                 href="/studio"
                 className={cn(
-                  buttonVariants({ size: "lg" }),
+                  buttonVariants({ variant: "outline", size: "lg" }),
                   "h-11 gap-2 px-5 text-[1rem]",
                 )}
               >
                 <Theater className="size-[18px]" />
                 Open the Studio
               </Link>
-              <ModeSwitch mode={mode} onChange={setMode} className="h-11" />
-              <InfoTip title="Body or numbers?" side="bottom">
-                <p>
-                  Strip the picture of a person out of a notation and what is
-                  left is a small set of numbers: which part, which direction,
-                  how high, how long.
-                </p>
-                <p>
-                  That set is what all four systems share — and exactly what a
-                  computer animates, which is why choreography and 3-D animation
-                  describe movement the same way.
-                </p>
-              </InfoTip>
             </div>
           </div>
 
@@ -312,28 +307,48 @@ export default function ParametersApp() {
           </span>
 
           <div className="flex-1" />
+
+          {/* the one control that changes how every score below is written */}
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground text-[0.78rem] font-medium tracking-wide uppercase">
+              Read as
+            </span>
+            <ModeSwitch mode={mode} onChange={setMode} />
+            <InfoTip title="Body, or the numbers underneath?" side="bottom">
+              <p>
+                <strong>Body</strong> shows each notation the way a dancer reads it — staves, figures, body parts.
+              </p>
+              <p>
+                <strong>Numbers</strong> takes the dancer away and leaves what the system actually records: which
+                channel, which direction, how high, how long. That set is what all four share, and exactly what a
+                computer animates.
+              </p>
+            </InfoTip>
+          </div>
         </div>
       </div>
 
       {/* ============================ TABS ============================ */}
-      <main className="mx-auto max-w-[1200px] px-6 py-14">
+      <main id="scores" className="mx-auto max-w-[1200px] scroll-mt-32 px-6 py-14">
         <Tabs
           value={tab}
           onValueChange={(v) => setTab(String(v))}
           className="gap-10"
         >
-          <TabsList className="h-auto max-w-full flex-wrap justify-start gap-1 p-1.5">
-            {TABS.map(({ value, label, Icon }) => (
-              <TabsTrigger
-                key={value}
-                value={value}
-                className="text-foreground/75 h-10 flex-none gap-2 px-4 text-[0.95rem]"
-              >
-                <Icon className="size-4" />
-                {label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+          <div className="score-scroll -mx-1 px-1">
+            <TabsList className="h-12! w-fit gap-1 p-1.5">
+              {TABS.map(({ value, label, Icon }) => (
+                <TabsTrigger
+                  key={value}
+                  value={value}
+                  className="text-foreground/75 h-full flex-none gap-2 px-4 text-[0.95rem]"
+                >
+                  <Icon className="size-4" />
+                  {label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
 
           {/* ---------------------- 1. THE PHRASE ---------------------- */}
           <TabsContent value="phrase" className="space-y-10">
