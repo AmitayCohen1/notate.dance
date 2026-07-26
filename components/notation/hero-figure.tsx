@@ -16,9 +16,11 @@ import {
 
 /** The stances the figure travels through, by name in PRESETS. */
 const SEQUENCE = ["Stand", "Reach", "Second", "Attitude", "Arabesque", "Jump", "Tilt", "Plié", "Lunge"];
-const HOLD = 1.5; // seconds per transition
-const TRAIL = 44; // wrist-path samples kept
-const GHOSTS = 5;
+const TRAVEL = 1.15; // seconds moving between stances
+const SETTLE = 0.75; // seconds held on the stance, so the eye can read it
+const STEP = TRAVEL + SETTLE;
+const TRAIL = 34; // wrist-path samples kept
+const GHOSTS = 3;
 
 function poseFrom(name: string): Pose {
   return clonePose((PRESETS.find((p) => p.name === name) ?? PRESETS[0]).pose);
@@ -41,9 +43,18 @@ function blend(a: Pose, b: Pose, u: number): Pose {
  *
  * It is the whole site in one image — a body reduced to directions.
  */
-export default function HeroFigure({ className = "" }: { className?: string }) {
+export default function HeroFigure({
+  className = "",
+  onReadout,
+}: {
+  className?: string;
+  /** Called a few times a second with the right arm, as each notation would write it. */
+  onReadout?: (r: { ew: string; laban: string }) => void;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const themeTick = useThemeTick();
+  const readoutRef = useRef(onReadout);
+  readoutRef.current = onReadout;
 
   useEffect(() => {
     const cv = canvasRef.current;
@@ -76,20 +87,20 @@ export default function HeroFigure({ className = "" }: { className?: string }) {
       const brand = cssVar("--n-brand");
 
       // where in the sequence we are
-      const total = poses.length * HOLD;
+      const total = poses.length * STEP;
       const local = ((elapsed % total) + total) % total;
-      const i = Math.floor(local / HOLD);
-      const u = smooth((local % HOLD) / HOLD);
+      const i = Math.floor(local / STEP);
+      const u = smooth(Math.min(1, (local % STEP) / TRAVEL));
       const pose = blend(poses[i], poses[(i + 1) % poses.length], u);
       pose.x = 0;
       pose.z = 0;
       pose.facing = 0;
 
-      const cam = { yaw: reduced ? 26 : 20 + Math.sin(elapsed * 0.18) * 26, pitch: 14, dist: 3.05 };
+      const cam = { yaw: reduced ? 26 : 20 + Math.sin(elapsed * 0.18) * 26, pitch: 14, dist: 3.2 };
       // project into the real box, then drop the whole scene a little so the
       // figure sits on the lower third with headroom above it
       const raw = project(cam, w, h);
-      const shift = h * 0.015;
+      const shift = -h * 0.02;
       const P = (v: Vec3) => {
         const p = raw(v);
         return p ? { ...p, y: p.y + shift } : null;
@@ -148,7 +159,7 @@ export default function HeroFigure({ className = "" }: { className?: string }) {
       };
 
       // ghosts of where the body just was
-      ghosts.forEach((g, gi) => drawFigure(g, faint, 1.2, 0.1 + (gi / ghosts.length) * 0.22));
+      ghosts.forEach((g, gi) => drawFigure(g, faint, 1.1, 0.07 + (gi / ghosts.length) * 0.13));
 
       // the wrist's path through space
       if (trail.length > 1) {
@@ -188,17 +199,6 @@ export default function HeroFigure({ className = "" }: { className?: string }) {
         ctx.fill();
       }
 
-      // the same movement, as numbers
-      const ew = ewOfBone(pose, "ruarm");
-      const q = labanOf(vec(...pose.bones.ruarm));
-      ctx.font = "12px ui-monospace, SFMono-Regular, Menlo, monospace";
-      ctx.fillStyle = soft;
-      ctx.fillText("right arm", 20, h - 62);
-      ctx.fillStyle = brand;
-      ctx.fillText(`${ew.v.toFixed(1)} / ${ew.h.toFixed(1)}`, 20, h - 42);
-      ctx.fillStyle = faint;
-      ctx.fillText(`${q.dir} · ${q.level}`, 20, h - 22);
-
       // sample the trail and the ghosts on a slower clock than the frame rate
       if (!reduced) {
         frame++;
@@ -206,16 +206,24 @@ export default function HeroFigure({ className = "" }: { className?: string }) {
           trail.push(sk.named.rwrist);
           if (trail.length > TRAIL) trail.shift();
         }
-        if (frame % 14 === 0) {
+        if (frame % 22 === 0) {
           ghosts.push(clonePose(pose));
           if (ghosts.length > GHOSTS) ghosts.shift();
         }
       }
+
+      // hand the same movement to React as numbers, at a readable rate
+      if (readoutRef.current && frame % 9 === 0) {
+        const ew = ewOfBone(pose, "ruarm");
+        const q = labanOf(vec(...pose.bones.ruarm));
+        readoutRef.current({ ew: `${ew.v.toFixed(1)} / ${ew.h.toFixed(1)}`, laban: `${q.dir} · ${q.level}` });
+      }
     };
 
     if (reduced) {
-      draw(HOLD * 4.5);
-      const onResize = () => draw(HOLD * 4.5);
+      frame = 8; // let the single draw emit one readout
+      draw(STEP * 4.5);
+      const onResize = () => draw(STEP * 4.5);
       window.addEventListener("resize", onResize);
       return () => window.removeEventListener("resize", onResize);
     }

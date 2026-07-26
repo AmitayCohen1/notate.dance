@@ -702,7 +702,7 @@ export default function StudioApp() {
               <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b px-3 py-2">
                 <TabsList className="h-9">
                   {DOCK_TABS.map(({ value, label, Icon }) => (
-                    <TabsTrigger key={value} value={value} className="gap-1.5 px-3 text-[0.9rem]">
+                    <TabsTrigger key={value} value={value} className="text-foreground/75 gap-1.5 px-3 text-[0.9rem]">
                       <Icon className="size-4" />
                       <span className="hidden sm:inline">{label}</span>
                     </TabsTrigger>

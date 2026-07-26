@@ -120,6 +120,7 @@ export default function ParametersApp() {
   const [selected, setSelected] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [tab, setTab] = useState<string>("phrase");
+  const [readout, setReadout] = useState({ ew: "2.0 / 0.0", laban: "forward · middle" });
 
   const tRef = useRef(0);
   const clockRef = useRef<HTMLSpanElement>(null);
@@ -192,7 +193,7 @@ export default function ParametersApp() {
 
       {/* ============================ HERO ============================ */}
       <section className="border-b">
-        <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-6 py-16 lg:grid-cols-[1fr_0.92fr] lg:gap-16 lg:py-24">
+        <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-6 py-14 lg:grid-cols-[1fr_0.92fr] lg:gap-14 lg:py-16">
           <div className="space-y-7">
             <h1 className="text-[2.9rem] leading-[1] font-semibold tracking-tight text-balance sm:text-[4rem]">
               One movement,
@@ -231,15 +232,19 @@ export default function ParametersApp() {
           </div>
 
           <div className="bg-card overflow-hidden rounded-xl border">
-            <div className="relative">
-              <HeroFigure className="h-[300px] sm:h-[368px]" />
-              <p className="text-muted-foreground pointer-events-none absolute top-4 right-5 font-mono text-xs">
-                one body · ten directions
-              </p>
+            <HeroFigure className="h-[300px] sm:h-[372px]" onReadout={setReadout} />
+            <div className="flex items-center justify-between gap-4 border-t px-5 py-3">
+              <span className="text-muted-foreground text-[0.78rem] font-medium tracking-wide uppercase">
+                Right arm, right now
+              </span>
+              <span className="font-mono text-[0.9rem] tabular-nums">
+                <span className="text-brand">{readout.ew}</span>
+                <span className="text-muted-foreground"> · {readout.laban}</span>
+              </span>
             </div>
             <p className="text-muted-foreground border-t px-5 py-3.5 text-[0.92rem] leading-relaxed">
-              Every stance is ten directions and a hip height — nothing else.
-              The blue line is where the right wrist has just been.
+              A stance is ten directions and a hip height — nothing else. Those numbers are how Eshkol-Wachman and Laban
+              would write this arm; the trailing line is where the wrist has just been.
             </p>
           </div>
         </div>
@@ -317,12 +322,12 @@ export default function ParametersApp() {
           onValueChange={(v) => setTab(String(v))}
           className="gap-10"
         >
-          <TabsList className="h-auto w-full flex-wrap justify-start gap-1 p-2">
+          <TabsList className="h-auto max-w-full flex-wrap justify-start gap-1 p-1.5">
             {TABS.map(({ value, label, Icon }) => (
               <TabsTrigger
                 key={value}
                 value={value}
-                className="h-10 flex-none gap-2 px-4 text-[0.95rem]"
+                className="text-foreground/75 h-10 flex-none gap-2 px-4 text-[0.95rem]"
               >
                 <Icon className="size-4" />
                 {label}
