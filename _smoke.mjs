@@ -119,19 +119,40 @@ await step("score survives a reload", async () => {
   if (after !== before) throw new Error(`keyframes ${before} → ${after} after reload`);
 });
 
-await step("parameters page still interactive", async () => {
+await step("landing page: edit a move, jump a section, flip to numbers", async () => {
   await page.goto(base + "/", { waitUntil: "networkidle" });
-  // the hero's anchor should land on the scores
-  await page.getByRole("link", { name: /Read the four notations/ }).click();
+
+  // the hero sends you to the instrument
+  await page.getByRole("link", { name: /Start with one move/ }).click();
   await page.waitForTimeout(600);
-  await page.getByRole("button", { name: /Cast chance/ }).click();
-  await page.getByRole("tab", { name: /Eshkol/ }).click();
-  // "read as" lives in the score toolbar, beside the scores it rewrites
+  await page.getByRole("button", { name: "Left arm", exact: true }).click();
+  await page.getByRole("button", { name: /Roll the whole phrase/ }).click();
+  await page.waitForTimeout(400);
+
+  // every notation is a section on the page, not a tab
+  if (await page.getByRole("tab").count()) throw new Error("landing page still has tabs");
+  for (const id of ["phrase", "laban", "benesh", "ew", "compare"]) {
+    if (!(await page.locator(`#${id}`).count())) throw new Error("missing section " + id);
+  }
+
+  // the sticky index jumps, and marks where you are
+  await page.getByRole("link", { name: "Eshkol-Wachman" }).click();
+  await page.waitForTimeout(900);
+  const current = await page.locator('nav[aria-label="Sections"] a[aria-current="true"]').innerText();
+  if (!/Eshkol/.test(current)) throw new Error("section index did not follow the jump: " + current);
+
+  // "read as" rewrites every score below
   await page.getByRole("button", { name: "Numbers" }).click();
   await page.waitForTimeout(500);
-  // in Numbers mode the badges quote the coordinates, not the body
-  const badge = await page.getByText("v ∈", { exact: false }).count();
-  if (!badge) throw new Error("switching to Numbers did not re-spell the score");
+  if (!(await page.getByText("v ∈", { exact: false }).count())) {
+    throw new Error("switching to Numbers did not re-spell the scores");
+  }
+
+  // playback lives with the phrase, where it applies
+  await page.locator("#phrase").scrollIntoViewIfNeeded();
+  await page.getByRole("button", { name: /Play the phrase/ }).click();
+  await page.waitForTimeout(800);
+  await page.getByRole("button", { name: /^Pause$/ }).click();
 });
 
 console.log("\nconsole errors:", errors.length ? JSON.stringify(errors.slice(0, 6), null, 2) : "none");
