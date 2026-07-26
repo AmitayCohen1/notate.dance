@@ -275,7 +275,7 @@ export default function ParametersApp() {
             </>
           }
           chips={<ParamBadges set={CHIPSETS.lifeforms} mode={mode} />}
-          aside={<Plate plate={PLATES.cunningham} imgClassName="max-h-[300px]" />}
+          aside={<Plate plate={PLATES.cunningham} frame="square" />}
         >
           <div className="flex flex-wrap items-center gap-3">
             <Button size="lg" onClick={() => setPlaying((p) => !p)} className="gap-2">
@@ -342,7 +342,7 @@ export default function ParametersApp() {
             </p>
           }
           chips={<ParamBadges set={CHIPSETS.laban} mode={mode} />}
-          aside={<Plate plate={PLATES.labanDirections} />}
+          aside={<Plate plate={PLATES.labanDirections} frame="wide" />}
           tinted
         >
           <Card>
@@ -370,7 +370,7 @@ export default function ParametersApp() {
           >
             <LabanView phrase={phrase} mode={mode} selected={selected} onSelect={setSelected} />
           </ScoreCard>
-          <Plate plate={abs ? PLATES.laban26 : PLATES.labanScore} />
+          <Plate plate={abs ? PLATES.laban26 : PLATES.labanScore} frame="wide" />
           </div>
         </Section>
 
@@ -405,7 +405,7 @@ export default function ParametersApp() {
             </>
           }
           chips={<ParamBadges set={CHIPSETS.benesh} mode={mode} />}
-          aside={<Plate plate={PLATES.benesh} />}
+          aside={<Plate plate={PLATES.benesh} frame="strip" />}
         >
           <ScoreCard
             icon={Rows3}
@@ -454,7 +454,7 @@ export default function ParametersApp() {
             </>
           }
           chips={<ParamBadges set={CHIPSETS.ew} mode={mode} />}
-          aside={<Plate plate={PLATES.eshkol} imgClassName="max-h-[330px]" />}
+          aside={<Plate plate={PLATES.eshkol} frame="square" />}
           tinted
         >
           <div className="grid gap-6 lg:grid-cols-[1.45fr_1fr]">
@@ -492,7 +492,7 @@ export default function ParametersApp() {
               what is left when you take the body away — the part every system agrees on.
             </p>
           }
-          aside={<Plate plate={PLATES.feuillet} imgClassName="max-h-[380px]" />}
+          aside={<Plate plate={PLATES.feuillet} frame="portrait" />}
         >
           <Card className="overflow-hidden py-0">
             <div className="score-scroll">
@@ -566,7 +566,7 @@ export default function ParametersApp() {
           </Card>
 
           <div className="grid gap-6 md:grid-cols-2">
-            <Plate plate={PLATES.labanPortrait} imgClassName="max-h-[320px]" />
+            <Plate plate={PLATES.labanPortrait} frame="wide" />
             <Card>
               <CardContent className="prose-note space-y-3 text-[1.05rem]">
                 <p>

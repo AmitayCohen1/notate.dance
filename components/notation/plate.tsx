@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 /** A credited historical image. Every plate on the site names its source. */
 export interface PlateSource {
@@ -100,27 +101,47 @@ export const PLATES = {
   },
 } satisfies Record<string, PlateSource>;
 
+/**
+ * How much room the plate takes in the layout. The frame is a layout
+ * decision, not a property of the picture: every image is letterboxed
+ * inside a fixed box so a tall scan or a wide strip can never stretch a
+ * card and knock the page about. It also means no shift while loading.
+ */
+const FRAMES = {
+  wide: "aspect-[4/3]",
+  square: "aspect-square",
+  portrait: "aspect-[3/4]",
+  strip: "aspect-[16/5]",
+} as const;
+
 export function Plate({
   plate,
+  frame = "wide",
   className = "",
-  imgClassName = "",
 }: {
   plate: PlateSource;
+  frame?: keyof typeof FRAMES;
   className?: string;
-  imgClassName?: string;
 }) {
   return (
-    <figure className={`overflow-hidden rounded-xl border ${className}`}>
-      <div className={plate.bg ? "bg-white p-3 dark:bg-zinc-100" : ""}>
+    <figure className={cn("bg-card flex flex-col overflow-hidden rounded-xl border", className)}>
+      <div
+        className={cn(
+          "flex items-center justify-center overflow-hidden",
+          FRAMES[frame],
+          plate.bg ? "bg-white p-3 dark:bg-zinc-100" : "bg-muted/50",
+        )}
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={plate.src}
           alt={plate.alt}
           loading="lazy"
-          className={`w-full ${plate.fit === "cover" ? "object-cover" : "object-contain"} ${imgClassName}`}
+          decoding="async"
+          className={cn("max-h-full max-w-full", plate.fit === "cover" ? "h-full w-full object-cover" : "object-contain")}
         />
       </div>
-      <figcaption className="bg-card space-y-1.5 border-t p-4">
+      <figcaption className="flex-1 space-y-1.5 border-t p-4">
         <p className="text-[0.95rem] leading-relaxed">{plate.caption}</p>
         <a
           href={plate.href}

@@ -513,7 +513,7 @@ export default function StudioApp() {
           </Table>
         </div>
 
-        <Plate plate={PLATES.cunningham} imgClassName="max-h-[320px]" />
+        <Plate plate={PLATES.cunningham} frame="wide" />
 
         <Card>
           <CardContent className="prose-note space-y-3 text-[1.02rem]">
