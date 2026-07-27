@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Shapes, Theater } from "lucide-react";
+import { Shapes, Theater, UserRound } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
@@ -55,6 +55,16 @@ export default function SiteHeader({
         </nav>
 
         <div className="flex-1" />
+
+        {/* A destination, not one of the two modes — so it stays out of the pill. */}
+        <Link
+          href="/#about"
+          className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 px-1 text-[14px] font-medium transition-colors"
+        >
+          <UserRound className="size-4" />
+          About
+        </Link>
+
         {children}
         <ThemeToggle />
       </div>

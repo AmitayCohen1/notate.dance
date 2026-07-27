@@ -586,57 +586,87 @@ export default function ParametersApp() {
 
       {/* ============================ FOOTER ============================ */}
       <footer className="bg-muted/40 border-t">
-        <div className="mx-auto grid max-w-[1200px] gap-12 px-6 py-16 md:grid-cols-3">
-          <div className="space-y-2">
-            <h3 className="flex items-center gap-1 font-medium">
-              A choreographer at a screen
-              <InfoTip title="Cunningham's computer works">
-                <p>
-                  <em>Trackers</em> (1991) was the first stage work he made with the software.
-                </p>
-                <p>
-                  For <em>BIPED</em> (1999) he went further: dancers were motion-captured, and the artists Paul Kaiser
-                  and Shelley Eshkar projected their hand-drawn, bodiless traces over the live stage.
-                </p>
-              </InfoTip>
-            </h3>
-            <p className="prose-note text-[1rem]">
-              Merce Cunningham was seventy when he started choreographing at a computer. He liked that the figure on
-              screen had no habits and never got tired, so it suggested positions a trained dancer never would.
-            </p>
+        <div className="mx-auto max-w-[1200px] px-6 py-16">
+          {/* ---- who made this ---- */}
+          <div
+            id="about"
+            className="grid scroll-mt-24 gap-10 sm:grid-cols-[minmax(0,400px)_1fr] sm:items-center sm:gap-12"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/gal.jpg"
+              alt="Gal Bruck Gorfung"
+              loading="lazy"
+              decoding="async"
+              className="bg-card aspect-[3/4] w-full rounded-xl border object-cover"
+            />
+            <div className="space-y-4">
+              <span className="text-muted-foreground block font-mono text-[0.78rem] tracking-[0.16em] uppercase">
+                Who made this
+              </span>
+              <h3 className="text-[2.35rem] leading-[1.04] font-semibold tracking-tight sm:text-[2.8rem]">
+                Gal Bruck Gorfung
+              </h3>
+              <p className="prose-note max-w-[44ch] text-[1.28rem] leading-[1.45]">
+                A creator, dancer, and researcher in neuroscience.
+              </p>
+            </div>
           </div>
-          <div className="space-y-2">
-            <h3 className="flex items-center gap-1 font-medium">
-              This is the simple version
-              <InfoTip title="What has been left out">
-                <p>
-                  Real Labanotation has columns for the supporting legs, torso and head, and a large set of signs for the
-                  quality of a movement.
-                </p>
-                <p>Real Benesh records travelling and turning below the stave, in bars, like music.</p>
-                <p>
-                  Real Eshkol-Wachman divides angles as finely as it likes, and distinguishes flat, cone-shaped and
-                  twisting paths.
-                </p>
-              </InfoTip>
-            </h3>
-            <p className="prose-note text-[1rem]">
-              Each system here is cut down to the same small vocabulary — one moving part at a time, eight directions,
-              three heights — so that they can be compared side by side. The real ones are much richer.
-            </p>
-          </div>
-          <div className="space-y-2">
-            <h3 className="font-medium">Try it yourself</h3>
-            <p className="prose-note text-[1rem]">
-              The <strong>Studio</strong> is a working rebuild of the software: pose a figure, place snapshots, send the
-              dancers walking, and read what you made back in all three notations.
-            </p>
-            <Link href="/studio" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "mt-2 gap-2")}>
-              Open the Studio
-              <ChevronRight className="size-4" />
-            </Link>
-          </div>
+
+          <Separator className="my-14" />
+
+          <div className="grid gap-12 md:grid-cols-3">
+            <div className="space-y-2">
+              <h3 className="flex items-center gap-1 font-medium">
+                A choreographer at a screen
+                <InfoTip title="Cunningham's computer works">
+                  <p>
+                    <em>Trackers</em> (1991) was the first stage work he made with the software.
+                  </p>
+                  <p>
+                    For <em>BIPED</em> (1999) he went further: dancers were motion-captured, and the artists Paul Kaiser
+                    and Shelley Eshkar projected their hand-drawn, bodiless traces over the live stage.
+                  </p>
+                </InfoTip>
+              </h3>
+              <p className="prose-note text-[1rem]">
+                Merce Cunningham was seventy when he started choreographing at a computer. He liked that the figure on
+                screen had no habits and never got tired, so it suggested positions a trained dancer never would.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="flex items-center gap-1 font-medium">
+                This is the simple version
+                <InfoTip title="What has been left out">
+                  <p>
+                    Real Labanotation has columns for the supporting legs, torso and head, and a large set of signs for the
+                    quality of a movement.
+                  </p>
+                  <p>Real Benesh records travelling and turning below the stave, in bars, like music.</p>
+                  <p>
+                    Real Eshkol-Wachman divides angles as finely as it likes, and distinguishes flat, cone-shaped and
+                    twisting paths.
+                  </p>
+                </InfoTip>
+              </h3>
+              <p className="prose-note text-[1rem]">
+                Each system here is cut down to the same small vocabulary — one moving part at a time, eight directions,
+                three heights — so that they can be compared side by side. The real ones are much richer.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-medium">Try it yourself</h3>
+              <p className="prose-note text-[1rem]">
+                The <strong>Studio</strong> is a working rebuild of the software: pose a figure, place snapshots, send the
+                dancers walking, and read what you made back in all three notations.
+              </p>
+              <Link href="/studio" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "mt-2 gap-2")}>
+                Open the Studio
+                <ChevronRight className="size-4" />
+              </Link>
+            </div>
         </div>
+          </div>
       </footer>
     </div>
   );
