@@ -1049,7 +1049,7 @@ const he: Copy = {
         photo: "/gal.jpg",
       },
       {
-        name: "עמיתי כהן",
+        name: "אמיתי כהן",
         bio: "יוצר, רקדן, ומפתח תוכנה.",
         photo: "/amitay.jpg",
       },
