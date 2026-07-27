@@ -51,6 +51,15 @@ function pick<T>(a: T[]): T {
   return a[Math.floor(Math.random() * a.length)];
 }
 
+/* First letter of each of the first two words — the stand-in for a portrait. */
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => [...word][0] ?? "")
+    .join("");
+}
+
 export default function ParametersApp() {
   const t = useCopy();
   const locale = useLocale();
@@ -434,25 +443,43 @@ export default function ParametersApp() {
       </main>
 
       {/* ============================ WHO MADE THIS ============================ */}
-      {/* Its own band. The portrait is about Gal and nothing else, so it does
-          not sit beside the footer notes, which are about the work. */}
+      {/* Its own band. The portraits are about the people and nothing else, so
+          they do not sit beside the footer notes, which are about the work. */}
       <section id="about" className="scroll-mt-24 border-t py-16">
-        <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-7 px-6 text-center">
+        <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-9 px-6 text-center">
           <span className="text-muted-foreground font-mono text-[0.78rem] tracking-[0.16em] uppercase">
             {t.about.eyebrow}
           </span>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/gal.jpg"
-            alt={t.about.name}
-            loading="lazy"
-            decoding="async"
-            className="bg-card aspect-[3/4] w-full max-w-[320px] rounded-xl border object-cover"
-          />
-          <div className="space-y-3">
-            <h2 className="text-[2.35rem] leading-[1.04] font-semibold tracking-tight">{t.about.name}</h2>
-            <p className="prose-note text-[1.28rem] leading-[1.45]">{t.about.bio}</p>
-          </div>
+          <ul className="grid w-full max-w-[760px] gap-10 sm:grid-cols-2 sm:gap-12">
+            {t.about.people.map((person) => (
+              <li key={person.name} className="flex flex-col items-center gap-5">
+                {person.photo ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={person.photo}
+                    alt={person.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="bg-card aspect-[3/4] w-full max-w-[320px] rounded-xl border object-cover"
+                  />
+                ) : (
+                  /* No portrait yet: hold the same frame with a monogram so the
+                     two people stay the same size side by side. Stacked on a
+                     phone there is nothing to match, so it is not as tall. */
+                  <div
+                    aria-hidden
+                    className="bg-muted/60 text-muted-foreground/45 flex aspect-[3/2] w-full max-w-[320px] items-center justify-center rounded-xl border font-mono text-[2.75rem] tracking-[0.06em] sm:aspect-[3/4]"
+                  >
+                    {initials(person.name)}
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <h2 className="text-[1.85rem] leading-[1.06] font-semibold tracking-tight">{person.name}</h2>
+                  <p className="prose-note text-[1.1rem] leading-[1.45]">{person.bio}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

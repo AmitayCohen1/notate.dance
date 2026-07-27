@@ -8,6 +8,10 @@
 
 import type { Locale } from "./i18n";
 
+/* One of the people who made the site. `photo` is null when there is no
+   portrait yet, and the about band draws a monogram in its place. */
+type Person = { name: string; bio: string; photo: string | null };
+
 const en = {
   meta: {
     title: "Movement Languages — one movement, written four ways",
@@ -309,8 +313,18 @@ const en = {
 
   about: {
     eyebrow: "Who made this",
-    name: "Gal Bruck Gorfung",
-    bio: "A creator, dancer, and researcher in neuroscience.",
+    people: [
+      {
+        name: "Gal Bruck Gorfung",
+        bio: "A creator, dancer, and researcher in neuroscience.",
+        photo: "/gal.jpg",
+      },
+      {
+        name: "Amitay Cohen",
+        bio: "A creator, dancer, and software developer.",
+        photo: "/amitay.jpg",
+      },
+    ] as Person[],
   },
 
   footer: {
@@ -1028,8 +1042,18 @@ const he: Copy = {
 
   about: {
     eyebrow: "מי עשה את זה",
-    name: "גל ברוק גורפונג",
-    bio: "יוצר, רקדן, וחוקר בתחום מדעי המוח.",
+    people: [
+      {
+        name: "גל ברוק גורפונג",
+        bio: "יוצר, רקדן, וחוקר בתחום מדעי המוח.",
+        photo: "/gal.jpg",
+      },
+      {
+        name: "עמיתי כהן",
+        bio: "יוצר, רקדן, ומפתח תוכנה.",
+        photo: "/amitay.jpg",
+      },
+    ] as Person[],
   },
 
   footer: {

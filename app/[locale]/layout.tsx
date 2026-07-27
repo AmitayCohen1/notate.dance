@@ -37,8 +37,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: { default: t.title, template: `%s — ${NAME[locale]}` },
     description: t.description,
     applicationName: NAME[locale],
-    authors: [{ name: COPY[locale].about.name }],
-    creator: COPY[locale].about.name,
+    authors: COPY[locale].about.people.map((person) => ({ name: person.name })),
+    creator: COPY[locale].about.people.map((person) => person.name).join(", "),
     alternates: {
       canonical: path,
       languages: { en: "/", he: "/he", "x-default": "/" },
