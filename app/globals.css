@@ -215,3 +215,45 @@
     @apply italic;
   }
 }
+
+/* ============================================================
+   Hebrew (/he). Scoped to the language so the English pages
+   keep exactly the type they had.
+   ============================================================ */
+
+[lang="he"] body {
+  font-family: var(--font-heebo), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Hebrew has no upper case, so the latin eyebrow treatment (small caps
+   with wide tracking) just smears the word apart. */
+[lang="he"] .uppercase {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+[lang="he"] .prose-note,
+[lang="he"] .font-serif {
+  font-family: var(--font-frank-ruhl), Georgia, serif;
+}
+
+/* Hebrew has no italics; Frank Ruhl fakes them badly, so emphasis
+   inside Hebrew prose is carried by weight instead of slant. */
+[lang="he"] .prose-note em,
+[lang="he"] em {
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* The scores are not text. Labanotation reads bottom-up, Benesh and
+   Eshkol-Wachman read left-to-right by definition, so every notation
+   surface stays LTR even on the Hebrew page. */
+[dir="rtl"] .ltr-island {
+  direction: ltr;
+}
+
+/* Numerals, formulae and system names stay latin and left-to-right. */
+[dir="rtl"] .font-mono {
+  direction: ltr;
+  unicode-bidi: isolate;
+}

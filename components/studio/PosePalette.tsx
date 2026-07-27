@@ -2,6 +2,7 @@
 
 import { PRESETS, type Pose, clonePose, skeleton } from "@/lib/studio";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/components/locale-provider";
 
 const SIZE = 78;
 
@@ -49,14 +50,15 @@ export default function PosePalette({
   disabled?: boolean;
   layout?: "row" | "grid";
 }) {
+  const t = useCopy();
   return (
     <div className={cn("gap-3 p-5", layout === "grid" ? "flex flex-wrap" : "flex")}>
       {PRESETS.map((p, i) => (
         <button
-          key={p.name}
+          key={t.studio.presets[p.name]}
           type="button"
           disabled={disabled}
-          title={`Apply ${p.name} to the selected keyframe`}
+          title={t.studio.applyPreset(t.studio.presets[p.name])}
           onClick={() => onApply(p.pose)}
           className={cn(
             "hover:border-ring hover:bg-muted/60 flex shrink-0 flex-col items-center gap-1 rounded-lg border px-2 pt-2 pb-1.5 transition-colors",
@@ -64,7 +66,7 @@ export default function PosePalette({
           )}
         >
           <PoseThumb pose={p.pose} />
-          <span className="text-[0.85rem] font-medium">{p.name}</span>
+          <span className="text-[0.85rem] font-medium">{t.studio.presets[p.name]}</span>
         </button>
       ))}
     </div>

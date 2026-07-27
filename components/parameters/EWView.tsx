@@ -1,6 +1,7 @@
 "use client";
 
 import { LIMBS, Mode, PhraseEvent, ewOf, limbLabel, starts, totalBeats } from "./model";
+import { useCopy } from "@/components/locale-provider";
 
 const ROW_H = 58;
 const LEFT = 132;
@@ -18,6 +19,7 @@ export default function EWView({
   selected: number;
   onSelect: (i: number) => void;
 }) {
+  const t = useCopy();
   const st = starts(phrase);
   const T = totalBeats(phrase);
   const W = LEFT + T * COL_W + 16;
@@ -51,10 +53,10 @@ export default function EWView({
               textAnchor="end"
               fontSize={13}
               fill="var(--n-soft)"
-              fontFamily="var(--font-geist)"
+              fontFamily="var(--font-geist), var(--font-heebo)"
               style={{ letterSpacing: ".08em" }}
             >
-              {limbLabel(l.id, mode).toUpperCase()}
+              {limbLabel(t, l.id, mode).toUpperCase()}
             </text>
           </g>
         );

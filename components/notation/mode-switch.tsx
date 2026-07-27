@@ -3,6 +3,7 @@
 import { Boxes, PersonStanding } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { Mode } from "@/components/parameters/model";
+import { useCopy } from "@/components/locale-provider";
 
 /**
  * The page's central control: read every notation as a body, or strip the
@@ -17,6 +18,7 @@ export default function ModeSwitch({
   onChange: (m: Mode) => void;
   className?: string;
 }) {
+  const t = useCopy();
   return (
     <ToggleGroup
       value={[mode]}
@@ -26,16 +28,16 @@ export default function ModeSwitch({
       }}
       variant="outline"
       spacing={0}
-      aria-label="Representation mode"
+      aria-label={t.mode.label}
       className={className}
     >
-      <ToggleGroupItem value="embodied" className="gap-2 px-3" title="Show the body">
+      <ToggleGroupItem value="embodied" className="gap-2 px-3" title={t.mode.bodyTitle}>
         <PersonStanding className="size-4" />
-        Body
+        {t.mode.body}
       </ToggleGroupItem>
-      <ToggleGroupItem value="abstract" className="gap-2 px-3" title="Show the numbers behind it">
+      <ToggleGroupItem value="abstract" className="gap-2 px-3" title={t.mode.numbersTitle}>
         <Boxes className="size-4" />
-        Numbers
+        {t.mode.numbers}
       </ToggleGroupItem>
     </ToggleGroup>
   );

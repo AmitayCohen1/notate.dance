@@ -4,6 +4,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import InfoTip from "@/components/notation/info-tip";
 import { BONE, BONES, type BoneId, type Dancer, ewOfBone } from "@/lib/studio";
+import { useCopy } from "@/components/locale-provider";
 
 const ROW_H = 34;
 const LEFT = 128;
@@ -30,6 +31,7 @@ export default function EWTrack({
   onSelect: (k: number, bone: BoneId) => void;
   onStep: (axis: "az" | "el", dir: 1 | -1) => void;
 }) {
+  const t = useCopy();
   if (!dancer || !dancer.keys.length) return null;
 
   const colW = Math.max(38, 720 / length);
@@ -66,18 +68,11 @@ export default function EWTrack({
         </div>
         <div className="text-muted-foreground space-y-1.5 text-[0.9rem] leading-relaxed">
           <p className="text-foreground font-mono text-[0.85rem]">
-            {can && key ? `${BONE[selBone!].label} · beat ${key.beat}` : "Click a cell in the table"}
+            {can && key ? `${t.studio.bones[selBone!]} · ${t.studio.beatOf(key.beat)}` : t.studio.ewTrack.empty}
           </p>
           <p>
-            Each press turns that bone by 45°.
-            <InfoTip title="Reading this table" side="right">
-              <p>
-                Every cell holds two numbers. The top one is height: 0 is straight down, 2 is horizontal, 4 is straight
-                up. The bottom one is which way round the body, counting 45° at a time from straight ahead.
-              </p>
-              <p>Grey numbers mean nothing changed since the previous keyframe.</p>
-              <p>This is the only view that moves one bone at a time — the others move a whole arm or leg.</p>
-            </InfoTip>
+            {t.studio.ewTrack.hint}
+            <InfoTip title={t.studio.ewTrack.infoTitle} side="right">{t.studio.ewTrack.info}</InfoTip>
           </p>
         </div>
       </div>

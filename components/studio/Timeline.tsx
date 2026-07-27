@@ -2,6 +2,7 @@
 
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import type { Score } from "@/lib/studio";
+import { useCopy } from "@/components/locale-provider";
 
 export interface TimelineHandle {
   setPlayhead: (t: number) => void;
@@ -30,6 +31,7 @@ const Timeline = forwardRef<
     width?: number;
   }
 >(function Timeline({ score, selD, selK, tRef, onSelect, onSelectDancer, onScrub, width }, ref) {
+  const t = useCopy();
   const svgRef = useRef<SVGSVGElement>(null);
   const playheadRef = useRef<SVGLineElement>(null);
   const scrubbing = useRef(false);
@@ -128,11 +130,11 @@ const Timeline = forwardRef<
               textAnchor="end"
               fontSize={13}
               fill={di === selD ? "var(--n-ink)" : "var(--n-soft)"}
-              fontFamily="var(--font-geist)"
+              fontFamily="var(--font-geist), var(--font-heebo)"
               style={{ cursor: "pointer" }}
               onClick={() => onSelectDancer(di)}
             >
-              {d.name}
+              {t.studio.dancerName(di + 1)}
             </text>
             <line x1={LEFT} y1={y} x2={LEFT + T * colW} y2={y} style={{ stroke: "var(--n-line)" }} />
           </g>

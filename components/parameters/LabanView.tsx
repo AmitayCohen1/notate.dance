@@ -2,7 +2,8 @@
 
 import { Vec3 } from "@/lib/geometry";
 import { HatchPattern, LabanGlyph } from "@/components/notation/glyphs";
-import { LIMB, LIMBS, Mode, PhraseEvent, limbLabel, starts, totalBeats, vecOf } from "./model";
+import { LIMB, LIMBS, Mode, PhraseEvent, limbShort, starts, totalBeats, vecOf } from "./model";
+import { useCopy } from "@/components/locale-provider";
 
 export default function LabanView({
   phrase,
@@ -15,6 +16,7 @@ export default function LabanView({
   selected: number;
   onSelect: (i: number) => void;
 }) {
+  const t = useCopy();
   const st = starts(phrase);
   const T = totalBeats(phrase);
 
@@ -70,9 +72,9 @@ export default function LabanView({
               fontSize={13}
               style={{ letterSpacing: ".08em" }}
               fill="var(--n-soft)"
-              fontFamily="var(--font-geist)"
+              fontFamily="var(--font-geist), var(--font-heebo)"
             >
-              {limbLabel(l.id, mode).replace("Right", "R").replace("Left", "L").replace("Channel ", "k")}
+              {limbShort(t, l.id, mode)}
             </text>
           );
         })}
@@ -154,7 +156,7 @@ export default function LabanView({
         );
       })}
       <text x={cx} y={cy + L + 52} textAnchor="middle" className="font-mono" fontSize={14.3} fill="var(--n-faint)">
-        kinesphere lattice · 26 rays + centre
+        {t.scores.kinesphere}
       </text>
       {/* interval band */}
       <line x1={bx} y1={by} x2={bx} y2={by + bh} style={{ stroke: "var(--n-ink)", strokeWidth: 1.4 }} />
@@ -181,7 +183,7 @@ export default function LabanView({
         );
       })}
       <text x={bx + 40} y={by + bh + 30} textAnchor="middle" className="font-mono" fontSize={14.3} fill="var(--n-faint)">
-        Δt intervals
+        {t.scores.intervals}
       </text>
     </svg>
   );

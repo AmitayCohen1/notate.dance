@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { cssVar, prefersReducedMotion, useThemeTick } from "@/lib/canvas";
 import { type Vec3, dirToAzEl, nlerp, smooth, vec } from "@/lib/geometry";
 import { labanOf } from "@/lib/notation";
+import { useCopy } from "@/components/locale-provider";
 import {
   BONES,
   type Pose,
@@ -51,6 +52,7 @@ export default function HeroFigure({
   /** Called a few times a second with the right arm, as each notation would write it. */
   onReadout?: (r: { ew: string; laban: string }) => void;
 }) {
+  const t = useCopy();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const themeTick = useThemeTick();
   const readoutRef = useRef(onReadout);
@@ -216,7 +218,7 @@ export default function HeroFigure({
       if (readoutRef.current && frame % 9 === 0) {
         const ew = ewOfBone(pose, "ruarm");
         const q = labanOf(vec(...pose.bones.ruarm));
-        readoutRef.current({ ew: `${ew.v.toFixed(1)} / ${ew.h.toFixed(1)}`, laban: `${q.dir} · ${q.level}` });
+        readoutRef.current({ ew: `${ew.v.toFixed(1)} / ${ew.h.toFixed(1)}`, laban: `${t.dirs[q.dir]} · ${t.levels[q.level]}` });
       }
     };
 
@@ -235,7 +237,7 @@ export default function HeroFigure({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [themeTick]);
+  }, [themeTick, t]);
 
   return (
     <div className={className}>

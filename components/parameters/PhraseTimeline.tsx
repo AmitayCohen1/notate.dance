@@ -2,6 +2,7 @@
 
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { LIMBS, Mode, PhraseEvent, limbLabel, starts, totalBeats } from "./model";
+import { useCopy } from "@/components/locale-provider";
 
 export interface PlayheadHandle {
   setPlayhead: (t: number) => void;
@@ -16,6 +17,7 @@ const PhraseTimeline = forwardRef<
   PlayheadHandle,
   { phrase: PhraseEvent[]; mode: Mode; selected: number; onSelect: (i: number) => void; tRef: React.RefObject<number> }
 >(function PhraseTimeline({ phrase, mode, selected, onSelect, tRef }, ref) {
+  const t = useCopy();
   const st = starts(phrase);
   const T = totalBeats(phrase);
   const W = LEFT + T * COL_W + 20;
@@ -59,10 +61,10 @@ const PhraseTimeline = forwardRef<
               textAnchor="end"
               fontSize={13}
               fill="var(--n-soft)"
-              fontFamily="var(--font-geist)"
+              fontFamily="var(--font-geist), var(--font-heebo)"
               style={{ letterSpacing: ".08em" }}
             >
-              {limbLabel(l.id, mode).toUpperCase()}
+              {limbLabel(t, l.id, mode).toUpperCase()}
             </text>
             <line x1={LEFT} y1={y} x2={LEFT + T * COL_W} y2={y} style={{ stroke: "var(--n-line)", strokeWidth: 1 }} />
           </g>

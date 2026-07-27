@@ -29,7 +29,9 @@ import {
   Users,
 } from "lucide-react";
 import SiteHeader from "@/components/site-header";
-import { PLATES, Plate } from "@/components/notation/plate";
+import { Plate } from "@/components/notation/plate";
+import { useCopy, useLocale } from "@/components/locale-provider";
+import { localePath } from "@/lib/i18n";
 import InfoTip from "@/components/notation/info-tip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -77,18 +79,13 @@ import EWTrack from "./EWTrack";
 
 type JointId = BoneId | "root";
 
-const CAMS: { id: keyof typeof CAM_PRESETS; label: string }[] = [
-  { id: "perspective", label: "Persp" },
-  { id: "front", label: "Front" },
-  { id: "side", label: "Side" },
-  { id: "plan", label: "Plan" },
-];
+const CAMS = ["perspective", "front", "side", "plan"] as const;
 
 const DOCK_TABS = [
-  { value: "timeline", label: "Timeline", Icon: Rows3 },
-  { value: "laban", label: "Labanotation", Icon: Columns3 },
-  { value: "benesh", label: "Benesh", Icon: Layers },
-  { value: "ew", label: "Eshkol-Wachman", Icon: Grid3x3 },
+  { value: "timeline", Icon: Rows3 },
+  { value: "laban", Icon: Columns3 },
+  { value: "benesh", Icon: Layers },
+  { value: "ew", Icon: Grid3x3 },
 ] as const;
 
 /** A small labelled group inside a toolbar. */
@@ -104,6 +101,8 @@ function ToolGroup({ label, children }: { label: string; children: React.ReactNo
 }
 
 export default function StudioApp() {
+  const c = useCopy();
+  const locale = useLocale();
   const [score, setScore] = useState<Score>(() => demoScore());
   const [selD, setSelD] = useState(0);
   const [selK, setSelK] = useState(0);
@@ -429,11 +428,11 @@ export default function StudioApp() {
         <TabsList className="h-9 w-full">
           <TabsTrigger value="stance" className="gap-1.5 text-[0.9rem]">
             <SlidersHorizontal className="size-4" />
-            Pose
+            {c.studio.stance.tabPose}
           </TabsTrigger>
           <TabsTrigger value="echo" className="gap-1.5 text-[0.9rem]">
             <Grid3x3 className="size-4" />
-            Numbers
+            {c.studio.stance.tabNumbers}
           </TabsTrigger>
         </TabsList>
       </div>
@@ -456,8 +455,8 @@ export default function StudioApp() {
         />
         <div className="border-t">
           <div className="text-muted-foreground flex items-start gap-1 px-5 pt-4 text-[0.9rem] leading-relaxed">
-            <span>Or start from a ready-made pose — it keeps the dancer&apos;s place on the floor.</span>
-            <InfoTip title="Stance palette" side="left">
+            <span>{c.studio.presetHint}</span>
+            <InfoTip title={c.studio.paletteTitle} side="left">
               <p>
                 The original software shipped libraries of named body shapes that a choreographer dragged onto the
                 timeline. These ten are the same idea.
@@ -477,10 +476,8 @@ export default function StudioApp() {
   const referenceSheet = (
     <SheetContent side="right" className="w-full gap-0 overflow-y-auto p-0 sm:max-w-[560px]">
       <SheetHeader className="border-b p-6">
-        <SheetTitle className="text-xl">What LifeForms had, and what this studio keeps</SheetTitle>
-        <SheetDescription className="text-[0.95rem]">
-          A study of the software&apos;s concepts, not a port of its code.
-        </SheetDescription>
+        <SheetTitle className="text-xl">{c.studio.reference.title}</SheetTitle>
+        <SheetDescription className="text-[0.95rem]">{c.studio.reference.desc}</SheetDescription>
       </SheetHeader>
 
       <div className="space-y-6 p-6">
@@ -488,22 +485,12 @@ export default function StudioApp() {
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/60">
-                <TableHead className="w-[38%]">In the software</TableHead>
-                <TableHead>Here</TableHead>
+                <TableHead className="w-[38%]">{c.studio.reference.headSoftware}</TableHead>
+                <TableHead>{c.studio.reference.headHere}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {[
-                ["Stance window", "Stance editor — per-segment azimuth/elevation, hip height, facing"],
-                ["Stance palettes", "Palette — stamp a named stance into the selected keyframe"],
-                ["Sequence editor", "Timeline — diamonds per dancer, nudge, delete, eased interpolation"],
-                ["Studio window", "Stage — up to four dancers, orbit and zoom, front/side/plan cameras"],
-                ["Spatial paths", "Floor paths — every keyframe carries x/z and a facing"],
-                ["Ghosting", "Ghost frames — the adjacent keyframe stances drawn faint"],
-                ["Chance procedures", "Chance — dice a pose, a phrase, or the use of space"],
-                ["— never in the software —", "Translations — the same track editable in three notations"],
-                ["Skinning, IK, file I/O", "Out of scope: the wireframe is the point"],
-              ].map(([a, b]) => (
+              {c.studio.reference.rows.map(([a, b]) => (
                 <TableRow key={a}>
                   <TableCell className="text-muted-foreground align-top leading-relaxed">{a}</TableCell>
                   <TableCell className="align-top leading-relaxed">{b}</TableCell>
@@ -513,30 +500,15 @@ export default function StudioApp() {
           </Table>
         </div>
 
-        <Plate plate={PLATES.cunningham} frame="wide" />
+        <Plate name="cunningham" frame="wide" />
 
         <Card>
-          <CardContent className="prose-note space-y-3 text-[1.02rem]">
-            <p>
-              LifeForms began in the mid-1980s at Simon Fraser University, in Tom Calvert&apos;s computer-graphics group,
-              as a tool for <em>composing</em> human movement rather than animating characters. Cunningham started with
-              it in 1989 and made <em>Trackers</em> (1991) partly at the screen; Credo Interactive later sold it as{" "}
-              <em>DanceForms</em>.
-            </p>
-            <p>
-              What drew him was not efficiency but estrangement: the figure had no habits, no training and no fatigue, so
-              its stances arrived without the body&apos;s own censorship.
-            </p>
-            <p>
-              Every keyframe here stores a full stance — ten segment directions in (azimuth, elevation) — plus hip
-              height, a floor position and a facing. The score lives in this browser&apos;s local storage.
-            </p>
-          </CardContent>
+          <CardContent className="prose-note space-y-3 text-[1.02rem]">{c.studio.reference.essay}</CardContent>
         </Card>
 
-        <Button variant="outline" className="w-full gap-2" render={<Link href="/" />} nativeButton={false}>
+        <Button variant="outline" className="w-full gap-2" render={<Link href={localePath(locale, "/")} />} nativeButton={false}>
           <BookOpen className="size-4" />
-          How the three notations work
+          {c.studio.reference.link}
         </Button>
       </div>
     </SheetContent>
@@ -548,9 +520,9 @@ export default function StudioApp() {
     <div className="flex h-svh flex-col overflow-hidden">
       <SiteHeader current="studio">
         <Badge variant="outline" className="hidden h-7 gap-1.5 rounded-md px-2 font-normal md:flex">
-          <span className="text-muted-foreground">score</span>
+          <span className="text-muted-foreground">{c.studio.scoreBadge}</span>
           <span className="font-mono">
-            {score.dancers.length} dancer{score.dancers.length > 1 ? "s" : ""} · {score.length} beats
+            {c.studio.scoreSummary(score.dancers.length, score.length)}
           </span>
         </Badge>
         {/* the inspector lives in a side sheet until there is room for a panel */}
@@ -559,14 +531,14 @@ export default function StudioApp() {
             render={
               <Button size="sm" variant="outline" className="h-8 gap-1.5 font-normal xl:hidden">
                 <SlidersHorizontal className="size-4" />
-                Pose
+                {c.studio.poseButton}
               </Button>
             }
           />
           <SheetContent side="right" className="flex w-full flex-col gap-0 p-0 sm:max-w-[420px]">
             <SheetHeader className="border-b p-4">
-              <SheetTitle>Pose and numbers</SheetTitle>
-              <SheetDescription className="sr-only">Stance controls, ready-made poses and the notation echo</SheetDescription>
+              <SheetTitle>{c.studio.poseSheetTitle}</SheetTitle>
+              <SheetDescription className="sr-only">{c.studio.poseSheetDesc}</SheetDescription>
             </SheetHeader>
             {inspectorPanel}
           </SheetContent>
@@ -575,7 +547,7 @@ export default function StudioApp() {
         <Sheet>
           <SheetTrigger
             render={
-              <Button variant="ghost" size="icon" aria-label="About this studio">
+              <Button variant="ghost" size="icon" aria-label={c.studio.aboutAria}>
                 <Info className="size-[18px]" />
               </Button>
             }
@@ -589,13 +561,13 @@ export default function StudioApp() {
         <section className="flex min-w-0 flex-1 flex-col">
           {/* ---- stage toolbar ---- */}
           <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b px-4 py-2">
-            <ToolGroup label="Dancer">
+            <ToolGroup label={c.studio.groups.dancer}>
               <ToggleGroup
                 value={[String(selD)]}
                 onValueChange={(v) => v[0] !== undefined && selectKey(Number(v[0]), 0)}
                 variant="outline"
                 spacing={0}
-                aria-label="Selected dancer"
+                aria-label={c.studio.aria.selectedDancer}
               >
                 {score.dancers.map((d, i) => (
                   <ToggleGroupItem key={i} value={String(i)} className="px-2.5 text-[0.85rem]">
@@ -603,13 +575,13 @@ export default function StudioApp() {
                   </ToggleGroupItem>
                 ))}
               </ToggleGroup>
-              <Button size="icon-sm" variant="ghost" aria-label="Add dancer" onClick={addDancer} disabled={score.dancers.length >= 4}>
+              <Button size="icon-sm" variant="ghost" aria-label={c.studio.aria.addDancer} onClick={addDancer} disabled={score.dancers.length >= 4}>
                 <Plus className="size-4" />
               </Button>
               <Button
                 size="icon-sm"
                 variant="ghost"
-                aria-label="Remove dancer"
+                aria-label={c.studio.aria.removeDancer}
                 onClick={removeDancer}
                 disabled={score.dancers.length <= 1}
               >
@@ -619,18 +591,18 @@ export default function StudioApp() {
 
             <Separator orientation="vertical" className="h-7" />
 
-            <ToolGroup label="Camera">
+            <ToolGroup label={c.studio.groups.camera}>
               <Camera className="text-muted-foreground size-4 lg:hidden" />
               <ToggleGroup
                 value={[cameraId]}
                 onValueChange={(v) => v[0] && applyCamera(String(v[0]))}
                 variant="outline"
                 spacing={0}
-                aria-label="Camera"
+                aria-label={c.studio.aria.camera}
               >
-                {CAMS.map((c) => (
-                  <ToggleGroupItem key={c.id} value={c.id} className="px-2.5 text-[0.85rem]">
-                    {c.label}
+                {CAMS.map((id) => (
+                  <ToggleGroupItem key={id} value={id} className="px-2.5 text-[0.85rem]">
+                    {c.studio.cams[id]}
                   </ToggleGroupItem>
                 ))}
               </ToggleGroup>
@@ -646,7 +618,7 @@ export default function StudioApp() {
               className="h-8 gap-1.5 font-normal"
             >
               <Ghost className="size-4" />
-              Ghosts
+              {c.studio.ghosts}
             </Button>
             <Button
               size="sm"
@@ -656,24 +628,24 @@ export default function StudioApp() {
               className="h-8 gap-1.5 font-normal"
             >
               <Route className="size-4" />
-              Paths
+              {c.studio.paths}
             </Button>
 
             <div className="flex-1" />
 
-            <ToolGroup label="Chance">
+            <ToolGroup label={c.studio.groups.chance}>
               <span className="text-xl leading-none" aria-hidden="true">
                 {hexagram}
               </span>
               <Button size="sm" variant="outline" onClick={chancePose} className="text-destructive h-8 gap-1.5 font-normal">
                 <Dices className="size-4" />
-                Pose
+                {c.studio.chancePose}
               </Button>
               <Button size="sm" variant="outline" onClick={chancePhrase} className="text-destructive h-8 font-normal">
-                Phrase
+                {c.studio.chancePhrase}
               </Button>
               <Button size="sm" variant="outline" onClick={chanceSpace} className="text-destructive h-8 font-normal">
-                Space
+                {c.studio.chanceSpace}
               </Button>
             </ToolGroup>
 
@@ -692,7 +664,7 @@ export default function StudioApp() {
               paths={paths}
             />
             <div className="text-muted-foreground pointer-events-none absolute top-3 left-4 font-mono text-xs">
-              drag to turn the stage · scroll to zoom
+              {c.studio.stageHint}
             </div>
           </div>
 
@@ -701,38 +673,38 @@ export default function StudioApp() {
             <Tabs value={dock} onValueChange={(v) => setDock(String(v))} className="flex min-h-0 flex-1 flex-col gap-0">
               <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b px-3 py-2">
                 <TabsList className="h-9">
-                  {DOCK_TABS.map(({ value, label, Icon }) => (
+                  {DOCK_TABS.map(({ value, Icon }) => (
                     <TabsTrigger key={value} value={value} className="text-foreground/75 gap-1.5 px-3 text-[0.9rem]">
                       <Icon className="size-4" />
-                      <span className="hidden sm:inline">{label}</span>
+                      <span className="hidden sm:inline">{c.studio.tabs[value]}</span>
                     </TabsTrigger>
                   ))}
                 </TabsList>
 
                 <div className="flex-1" />
 
-                <ToolGroup label="Snapshot">
+                <ToolGroup label={c.studio.groups.snapshot}>
                   <Tooltip>
                     <TooltipTrigger
                       render={
                         <Button size="sm" variant="outline" onClick={addKeyframe} className="h-8 gap-1.5 font-normal">
                           <Plus className="size-4" />
-                          At playhead
+                          {c.studio.atPlayhead}
                         </Button>
                       }
                     />
-                    <TooltipContent>Save the current pose as a snapshot at the playhead (K)</TooltipContent>
+                    <TooltipContent>{c.studio.atPlayheadTip}</TooltipContent>
                   </Tooltip>
-                  <Button size="icon-sm" variant="outline" aria-label="Nudge earlier" onClick={() => nudge(-1)}>
+                  <Button size="icon-sm" variant="outline" aria-label={c.studio.aria.nudgeEarlier} onClick={() => nudge(-1)}>
                     <ChevronLeft className="size-4" />
                   </Button>
-                  <Button size="icon-sm" variant="outline" aria-label="Nudge later" onClick={() => nudge(1)}>
+                  <Button size="icon-sm" variant="outline" aria-label={c.studio.aria.nudgeLater} onClick={() => nudge(1)}>
                     <ChevronRight className="size-4" />
                   </Button>
                   <Button
                     size="icon-sm"
                     variant="outline"
-                    aria-label="Mirror pose"
+                    aria-label={c.studio.aria.mirror}
                     onClick={() => editKey((p) => mirrorPose(p))}
                   >
                     <FlipHorizontal2 className="size-4" />
@@ -740,7 +712,7 @@ export default function StudioApp() {
                   <Button
                     size="icon-sm"
                     variant="outline"
-                    aria-label="Delete keyframe"
+                    aria-label={c.studio.aria.deleteKey}
                     onClick={deleteKeyframe}
                     disabled={!dancer || dancer.keys.length <= 1}
                   >
@@ -750,12 +722,12 @@ export default function StudioApp() {
 
                 <Separator orientation="vertical" className="h-7" />
 
-                <ToolGroup label="Length">
-                  <Button size="icon-sm" variant="outline" aria-label="Eight beats shorter" onClick={() => changeLength(-8)}>
+                <ToolGroup label={c.studio.groups.length}>
+                  <Button size="icon-sm" variant="outline" aria-label={c.studio.aria.shorter} onClick={() => changeLength(-8)}>
                     <Minus className="size-4" />
                   </Button>
                   <span className="font-mono text-[0.85rem] tabular-nums">{score.length}</span>
-                  <Button size="icon-sm" variant="outline" aria-label="Eight beats longer" onClick={() => changeLength(8)}>
+                  <Button size="icon-sm" variant="outline" aria-label={c.studio.aria.longer} onClick={() => changeLength(8)}>
                     <Plus className="size-4" />
                   </Button>
                 </ToolGroup>
@@ -833,7 +805,7 @@ export default function StudioApp() {
       <div className="bg-card flex shrink-0 flex-wrap items-center gap-3 border-t px-4 py-2.5">
         <Button onClick={() => setPlaying((p) => !p)} className="gap-2">
           {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
-          {playing ? "Pause" : "Play"}
+          {playing ? c.studio.pause : c.studio.play}
         </Button>
         <Button
           variant={loop ? "secondary" : "outline"}
@@ -842,18 +814,18 @@ export default function StudioApp() {
           className="gap-2"
         >
           <Repeat className="size-4" />
-          Loop
+          {c.studio.loop}
         </Button>
 
         <span className="font-mono text-[0.9rem] tabular-nums">
-          beat <span ref={beatRef}>{t.toFixed(1)}</span>
+          {c.studio.beat} <span ref={beatRef}>{t.toFixed(1)}</span>
           <span className="text-muted-foreground"> / {score.length}</span>
         </span>
 
         <Separator orientation="vertical" className="h-7" />
 
         <div className="flex items-center gap-3">
-          <span className="text-muted-foreground text-[0.85rem]">Tempo</span>
+          <span className="text-muted-foreground text-[0.85rem]">{c.studio.tempo}</span>
           <Slider
             value={score.tempo}
             min={40}
@@ -867,25 +839,24 @@ export default function StudioApp() {
             }}
             className="w-24"
           />
-          <span className="w-[64px] shrink-0 font-mono text-[0.85rem] tabular-nums">{score.tempo} bpm</span>
+          <span className="w-[64px] shrink-0 font-mono text-[0.85rem] tabular-nums">{score.tempo} {c.studio.bpm}</span>
         </div>
 
         <div className="flex-1" />
 
         <span className="text-muted-foreground hidden font-mono text-xs lg:block">
-          {dancer?.name} · keyframe {selK + 1}/{dancer?.keys.length ?? 0}
-          {key ? ` at beat ${key.beat}` : ""} · space plays · ← → steps · K keys
+          {c.studio.status(c.studio.dancerName(selD + 1), selK + 1, dancer?.keys.length ?? 0, key ? c.studio.atBeat(key.beat) : "")}
         </span>
 
         <Tooltip>
           <TooltipTrigger
             render={
-              <Button variant="ghost" size="icon" aria-label="Reset score" onClick={resetScore}>
+              <Button variant="ghost" size="icon" aria-label={c.studio.aria.reset} onClick={resetScore}>
                 <RotateCcw className="size-4" />
               </Button>
             }
           />
-          <TooltipContent>Reset to the demo score</TooltipContent>
+          <TooltipContent>{c.studio.resetTip}</TooltipContent>
         </Tooltip>
       </div>
     </div>

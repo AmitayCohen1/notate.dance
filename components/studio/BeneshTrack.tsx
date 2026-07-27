@@ -6,6 +6,7 @@ import InfoTip from "@/components/notation/info-tip";
 import type { Vec3 } from "@/lib/geometry";
 import { DEPTH_GLYPH, beneshDepthOf } from "@/lib/notation";
 import { type Dancer, type LimbSetId, LIMBSETS, clonePose, limbLen, limbVec, skeleton } from "@/lib/studio";
+import { useCopy } from "@/components/locale-provider";
 
 const FW = 156;
 const STAVE_H = 122;
@@ -46,6 +47,7 @@ export default function BeneshTrack({
   onDrag: (k: number, part: LimbSetId, v: Vec3) => void;
   onDepth: (depth: Depth) => void;
 }) {
+  const t = useCopy();
   const svgRef = useRef<SVGSVGElement>(null);
   const drag = useRef<{ k: number; part: LimbSetId; jx: number; jy: number; L: number; zsign: number } | null>(null);
 
@@ -114,21 +116,11 @@ export default function BeneshTrack({
         </div>
         <div className="text-muted-foreground space-y-1.5 text-[0.9rem] leading-relaxed">
           <p className="text-foreground font-mono text-[0.85rem]">
-            {editable && key ? `${LIMBSETS[selPart].label} · beat ${key.beat}` : "Grab a hand or foot sign"}
+            {editable && key ? `${t.studio.limbsets[selPart]} · ${t.studio.beatOf(key.beat)}` : t.studio.beneshTrack.empty}
           </p>
           <p>
-            Drag a hand or foot anywhere inside its frame.
-            <InfoTip title="Reading these frames" side="right">
-              <p>
-                The five lines are heights on the body — head, shoulders, waist, knees, floor — not musical pitches. You
-                are standing behind the dancer.
-              </p>
-              <p>
-                The little stroke on each hand or foot says how deep it is: upright for in front, flat for level, a dot
-                for behind.
-              </p>
-              <p>The dots above each frame count its beats.</p>
-            </InfoTip>
+            {t.studio.beneshTrack.hint}
+            <InfoTip title={t.studio.beneshTrack.infoTitle} side="right">{t.studio.beneshTrack.info}</InfoTip>
           </p>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { Compass, Gauge, MoveVertical, PersonStanding, Timer, Waves } from "lucide-react";
 import { DEPTH_GLYPH, DIRS, LEVELS, ROSE_ORDER, type DirKey, type Level } from "@/lib/notation";
 import { LIMBS, type Mode, type PhraseEvent, depthOf, ewOf } from "./model";
+import { useCopy } from "@/components/locale-provider";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import InfoTip from "@/components/notation/info-tip";
@@ -78,27 +79,28 @@ export default function EventEditor({
   mode: Mode;
   onSet: (key: keyof PhraseEvent, val: string | number) => void;
 }) {
+  const t = useCopy();
   const abs = mode === "abstract";
 
   return (
     <div className="grid gap-x-8 gap-y-6 p-5 sm:grid-cols-2 lg:grid-cols-4">
-      <Field icon={PersonStanding} label={abs ? "Channel" : "Which part"}>
+      <Field icon={PersonStanding} label={abs ? t.editor.partAbs : t.editor.part}>
         <div className="flex flex-wrap gap-1.5">
           {LIMBS.map((l) => (
             <Opt key={l.id} on={ev.limb === l.id} onClick={() => onSet("limb", l.id)}>
-              {abs ? l.abs.replace("Channel ", "k") : l.body}
+              {abs ? `k${l.channel}` : t.limbs[l.id]}
             </Opt>
           ))}
         </div>
       </Field>
 
-      <Field icon={Compass} label={abs ? "Azimuth φ" : "Which way"}>
+      <Field icon={Compass} label={abs ? t.editor.wayAbs : t.editor.way}>
         <div className="grid w-fit grid-cols-3 gap-1.5">
           {ROSE_ORDER.map((d: DirKey) => (
             <Opt
               key={d}
               on={ev.dir === d}
-              title={DIRS[d].label}
+              title={t.dirs[d]}
               onClick={() => onSet("dir", d)}
               className="w-9 justify-center px-0 font-mono text-base"
             >
@@ -109,21 +111,21 @@ export default function EventEditor({
       </Field>
 
       <div className="space-y-6">
-        <Field icon={MoveVertical} label={abs ? "Elevation θ" : "How high"}>
+        <Field icon={MoveVertical} label={abs ? t.editor.highAbs : t.editor.high}>
           <div className="flex flex-wrap gap-1.5">
             {(Object.keys(LEVELS) as Level[]).map((k) => (
               <Opt key={k} on={ev.level === k} onClick={() => onSet("level", k)}>
-                {abs ? `${LEVELS[k].el}°` : k}
+                {abs ? `${LEVELS[k].el}°` : t.levels[k]}
               </Opt>
             ))}
           </div>
         </Field>
 
-        <Field icon={Timer} label={abs ? "Interval Δt" : "How long"}>
+        <Field icon={Timer} label={abs ? t.editor.longAbs : t.editor.long}>
           <div className="flex flex-wrap gap-1.5">
             {[1, 2, 3, 4].map((n) => (
               <Opt key={n} on={ev.beats === n} onClick={() => onSet("beats", n)}>
-                {n} beat{n > 1 ? "s" : ""}
+                {t.editor.beats(n)}
               </Opt>
             ))}
           </div>
@@ -133,48 +135,32 @@ export default function EventEditor({
       <div className="space-y-6">
         <Field
           icon={Waves}
-          label={abs ? "Easing" : "How it starts"}
-          infoTitle="Laban called this effort"
-          info={
-            <>
-              <p>
-                Laban thought a movement&apos;s <em>quality</em> mattered as much as its path, and wrote it with a
-                separate family of signs he called effort.
-              </p>
-              <p>
-                <strong>Sustained</strong> spreads the change evenly over the whole time. <strong>Sudden</strong> snaps
-                to the new position early and holds it.
-              </p>
-            </>
-          }
+          label={abs ? t.editor.startsAbs : t.editor.starts}
+          infoTitle={t.editor.effortTitle}
+          info={t.editor.effortInfo}
         >
           <div className="flex flex-wrap gap-1.5">
             <Opt on={ev.time === "sustained"} onClick={() => onSet("time", "sustained")}>
-              {abs ? "smooth" : "sustained"}
+              {abs ? t.editor.smooth : t.editor.sustained}
             </Opt>
             <Opt on={ev.time === "sudden"} onClick={() => onSet("time", "sudden")}>
-              {abs ? "snap" : "sudden"}
+              {abs ? t.editor.snap : t.editor.sudden}
             </Opt>
           </div>
         </Field>
 
         <Field
           icon={Gauge}
-          label={abs ? "Amplitude" : "How strong"}
-          infoTitle="Light or strong"
-          info={
-            <p>
-              The other half of Laban&apos;s effort pair: how much weight the mover puts behind the movement. Here it
-              simply draws the line thicker.
-            </p>
-          }
+          label={abs ? t.editor.strengthAbs : t.editor.strength}
+          infoTitle={t.editor.weightTitle}
+          info={t.editor.weightInfo}
         >
           <div className="flex flex-wrap gap-1.5">
             <Opt on={ev.weight === "light"} onClick={() => onSet("weight", "light")}>
-              {abs ? "low gain" : "light"}
+              {abs ? t.editor.lowGain : t.editor.light}
             </Opt>
             <Opt on={ev.weight === "strong"} onClick={() => onSet("weight", "strong")}>
-              {abs ? "high gain" : "strong"}
+              {abs ? t.editor.highGain : t.editor.strong}
             </Opt>
           </div>
         </Field>
@@ -184,17 +170,17 @@ export default function EventEditor({
         <Separator className="mb-4" />
         <div className="text-muted-foreground flex flex-wrap items-center gap-x-8 gap-y-2 font-mono text-[0.85rem]">
           <span>
-            <span className="text-foreground">Laban</span> {DIRS[ev.dir].label} · {ev.level}
+            <span className="text-foreground">Laban</span> {t.dirs[ev.dir]} · {t.levels[ev.level]}
           </span>
           <span>
-            <span className="text-foreground">Benesh</span> {DEPTH_GLYPH[depthOf(ev)]} {depthOf(ev)}
+            <span className="text-foreground">Benesh</span> {DEPTH_GLYPH[depthOf(ev)]} {t.depths[depthOf(ev)]}
           </span>
           <span>
             <span className="text-foreground">Eshkol-Wachman</span> {ewOf(ev).v} / {ewOf(ev).h}
           </span>
           <span>
-            <span className="text-foreground">LifeForms</span> {ev.beats} beat{ev.beats > 1 ? "s" : ""} ·{" "}
-            {ev.time === "sudden" ? "snap" : "smooth"}
+            <span className="text-foreground">LifeForms</span> {t.editor.beats(ev.beats)} ·{" "}
+            {ev.time === "sudden" ? t.editor.snap : t.editor.smooth}
           </span>
         </div>
       </div>

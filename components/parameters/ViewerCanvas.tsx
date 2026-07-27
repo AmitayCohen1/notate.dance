@@ -3,6 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { cssVar, sizeCanvas, useThemeTick } from "@/lib/canvas";
 import { LIMBS, Mode, PhraseEvent, poseAt, starts, totalBeats, vecOf } from "./model";
+import { useCopy } from "@/components/locale-provider";
 
 export interface ViewerHandle {
   redraw: () => void;
@@ -12,6 +13,7 @@ const ViewerCanvas = forwardRef<
   ViewerHandle,
   { phrase: PhraseEvent[]; mode: Mode; selected: number; tRef: React.RefObject<number> }
 >(function ViewerCanvas({ phrase, mode, selected, tRef }, ref) {
+  const copy = useCopy();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const props = useRef({ phrase, mode, selected });
   props.current = { phrase, mode, selected };
@@ -88,15 +90,15 @@ const ViewerCanvas = forwardRef<
         }
       }
       ctx.fillStyle = faint;
-      ctx.font = "10px Menlo, monospace";
-      ctx.fillText("front view · ring = limb reaching forward", 14, h - 12);
+      ctx.font = "10px Menlo, Arial, monospace";
+      ctx.fillText(copy.scores.frontView, 14, h - 12);
     } else {
       const T = totalBeats(phrase);
       const padL = 64;
       const padR = 16;
       const padT = 18;
       const rowH = (h - padT - 30) / LIMBS.length;
-      ctx.font = "10px Menlo, monospace";
+      ctx.font = "10px Menlo, Arial, monospace";
       LIMBS.forEach((l, r) => {
         const y0 = padT + r * rowH;
         const midY = y0 + rowH / 2;
@@ -146,14 +148,14 @@ const ViewerCanvas = forwardRef<
       ctx.lineTo(px, h - 26);
       ctx.stroke();
       ctx.fillStyle = faint;
-      ctx.fillText("elevation θ ∈ [−90°, +90°] · step targets, eased", 14, h - 8);
+      ctx.fillText(copy.scores.elevation, 14, h - 8);
     }
   };
 
   useImperativeHandle(ref, () => ({ redraw: draw }));
 
   // repaint on state or theme change
-  useEffect(draw, [phrase, mode, selected, themeTick]);
+  useEffect(draw, [phrase, mode, selected, themeTick, copy]);
   // repaint on resize
   useEffect(() => {
     const onResize = () => draw();

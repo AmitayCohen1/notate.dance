@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { Vec3, nlerp } from "@/lib/geometry";
 import { cssVar, prefersReducedMotion, sizeCanvas, useThemeTick } from "@/lib/canvas";
 import { LIMB, Mode, PhraseEvent, REST, ewOf, limbLabel, vecOf } from "./model";
+import { useCopy } from "@/components/locale-provider";
 
 export default function SphereCanvas({
   phrase,
@@ -14,6 +15,7 @@ export default function SphereCanvas({
   mode: Mode;
   selected: number;
 }) {
+  const t = useCopy();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const angleRef = useRef(0.5);
   const props = useRef({ phrase, mode, selected });
@@ -127,14 +129,15 @@ export default function SphereCanvas({
         ctx.fill();
         const co = ewOf(ev);
         ctx.fillStyle = ink;
-        ctx.font = "12px Menlo, monospace";
+        ctx.font = "12px Menlo, Arial, monospace";
         ctx.fillText(`(${co.v} / ${co.h})`, p.x + 9, p.y + 4);
         ctx.fillStyle = faint;
-        ctx.font = "10px Menlo, monospace";
+        ctx.font = "10px Menlo, Arial, monospace";
+        const tag = t.scores.eventLabel(selected + 1);
         const lab =
           mode === "abstract"
-            ? `unit vector on S² · event e${selected + 1}`
-            : `${limbLabel(ev.limb, mode).toLowerCase()} from the ${LIMB[ev.limb].joint} · event e${selected + 1}`;
+            ? `${t.scores.unitVectorS2} · ${tag}`
+            : `${limbLabel(t, ev.limb, mode)} ${t.scores.joint[LIMB[ev.limb].joint]} · ${tag}`;
         ctx.fillText(lab, 14, h - 12);
       }
     };

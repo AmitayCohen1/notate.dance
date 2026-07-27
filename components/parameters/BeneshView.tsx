@@ -2,6 +2,7 @@
 
 import { clamp } from "@/lib/geometry";
 import { LIMB, LIMBS, Mode, PhraseEvent, depthOf, limbLabel, vecOf } from "./model";
+import { useCopy } from "@/components/locale-provider";
 
 const FW = 168;
 const H = 234;
@@ -20,6 +21,7 @@ export default function BeneshView({
   selected: number;
   onSelect: (i: number) => void;
 }) {
+  const t = useCopy();
   const abs = mode === "abstract";
   const lines = [0, 0.25, 0.5, 0.75, 1].map((u) => TOP + u * STAVE_H);
   const [headY, shoulderY, waistY, kneeY, floorY] = lines;
@@ -36,7 +38,7 @@ export default function BeneshView({
             y={y + 3.5}
             fontSize={12.3}
             fill="var(--n-faint)"
-            fontFamily="var(--font-geist)"
+            fontFamily="var(--font-geist), var(--font-heebo)"
             style={{ letterSpacing: ".06em" }}
           >
             {abs ? "y=" + (1 - li * 0.25).toFixed(2) : NAMES[li].toUpperCase()}
@@ -126,7 +128,7 @@ export default function BeneshView({
                 <rect x={x0 + 4} y={lines[0] - 6} width={FW - 8} height={STAVE_H + 12} fill="none" style={{ stroke: "var(--n-brand)", strokeWidth: 1.2 }} strokeDasharray="3 3" />
               )}
               <text x={cxF} y={floorY + 34} textAnchor="middle" className="font-mono" fontSize={13} fill="var(--n-faint)">
-                e{i + 1} · {limbLabel(ev.limb, mode)}
+                e{i + 1} · {limbLabel(t, ev.limb, mode)}
               </text>
             </g>
           </g>

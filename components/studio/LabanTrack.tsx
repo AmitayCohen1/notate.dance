@@ -6,6 +6,7 @@ import InfoTip from "@/components/notation/info-tip";
 import { HatchPattern, LabanGlyph } from "@/components/notation/glyphs";
 import { DIR_ARROW, ROSE_ORDER, type DirKey, type Level, labanOf } from "@/lib/notation";
 import { type Dancer, type LimbSetId, LIMBSETS, limbVec } from "@/lib/studio";
+import { useCopy } from "@/components/locale-provider";
 
 const COLS: LimbSetId[] = ["larm", "lleg", "rleg", "rarm", "body", "head"];
 const LEVELS: Level[] = ["low", "middle", "high"];
@@ -50,6 +51,7 @@ export default function LabanTrack({
   onSetDir: (dir: DirKey) => void;
   onSetLevel: (level: Level) => void;
 }) {
+  const t = useCopy();
   const staffRef = useRef<HTMLDivElement>(null);
 
   // the staff reads upward from beat 0, so open at the bottom
@@ -112,21 +114,14 @@ export default function LabanTrack({
 
         <div className="text-muted-foreground space-y-1.5 text-[0.9rem] leading-relaxed">
           <p className="text-foreground font-mono text-[0.85rem]">
-            {key ? `${LIMBSETS[selPart].label} · beat ${key.beat}` : "Pick a slot on the staff"}
+            {key ? `${t.studio.limbsets[selPart]} · ${t.studio.beatOf(key.beat)}` : t.studio.labanTrack.empty}
           </p>
           <p>
-            Click a box on the staff, then aim it.
-            <InfoTip title="Reading this staff" side="right">
-              <p>It reads bottom to top. Each column is a body part; the middle double line is the dancer.</p>
-              <p>
-                A symbol&apos;s shape is the direction, its filling is the height, and how tall it is on the page is how
-                long it lasts.
-              </p>
-              <p>A dotted line means that limb just stays where it was.</p>
-            </InfoTip>
+            {t.studio.labanTrack.hint}
+            <InfoTip title={t.studio.labanTrack.infoTitle} side="right">{t.studio.labanTrack.info}</InfoTip>
           </p>
           <p className="text-[0.85rem]">
-            Laban rounds to eight directions, so aiming here straightens the whole arm or leg.
+            {t.studio.labanTrack.note}
           </p>
         </div>
       </div>
@@ -189,7 +184,7 @@ export default function LabanTrack({
               fill="var(--n-soft)"
               fontFamily="var(--font-geist)"
             >
-              {LIMBSETS[p].label}
+              {t.studio.limbsets[p]}
             </text>
           ))}
 

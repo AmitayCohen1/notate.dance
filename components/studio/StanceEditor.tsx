@@ -3,6 +3,7 @@
 import { Compass, MapPin, MoveVertical, RotateCw, Ruler } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import InfoTip from "@/components/notation/info-tip";
+import { useCopy } from "@/components/locale-provider";
 import { Slider } from "@/components/ui/slider";
 import { BONES, type BoneId, type Pose, ewOfBone } from "@/lib/studio";
 import { cn } from "@/lib/utils";
@@ -64,8 +65,9 @@ export default function StanceEditor({
   onBone: (index: 0 | 1, value: number) => void;
   onRoot: (key: "x" | "z" | "facing" | "hipY", value: number) => void;
 }) {
+  const t = useCopy();
   if (!pose) {
-    return <p className="text-muted-foreground p-5 text-[0.95rem]">No keyframe selected — add one at the playhead.</p>;
+    return <p className="text-muted-foreground p-5 text-[0.95rem]">{t.studio.stance.noKeyframe}</p>;
   }
 
   const isRoot = joint === "root";
@@ -76,16 +78,8 @@ export default function StanceEditor({
     <div className="@container space-y-5 p-5">
       <div className="space-y-2.5">
         <span className="text-muted-foreground flex items-center gap-1 text-[0.8rem] font-medium tracking-wide uppercase">
-          Which part
-          <InfoTip title="Ten bones, aimed one at a time" side="bottom">
-            <p>
-              The figure is ten straight bones. You aim each one in space rather than bending a joint by a certain
-              amount — the same way the three notations describe a body.
-            </p>
-            <p>
-              <strong>Place / facing</strong> moves the whole dancer around the floor instead.
-            </p>
-          </InfoTip>
+          {t.studio.stance.whichPart}
+          <InfoTip title={t.studio.stance.bonesTitle} side="bottom">{t.studio.stance.bonesInfo}</InfoTip>
         </span>
         <div className="flex flex-wrap gap-1.5">
           {BONES.map((b) => (
@@ -97,7 +91,7 @@ export default function StanceEditor({
               onClick={() => onJoint(b.id)}
               className="h-7 px-2.5 font-normal"
             >
-              {b.label}
+              {t.studio.bones[b.id]}
             </Button>
           ))}
           <Button
@@ -108,7 +102,7 @@ export default function StanceEditor({
             className={cn("h-7 gap-1.5 px-2.5 font-normal")}
           >
             <MapPin className="size-3.5" />
-            Place / facing
+            {t.studio.stance.placeFacing}
           </Button>
         </div>
       </div>
@@ -117,7 +111,7 @@ export default function StanceEditor({
         <div className="grid gap-5 @[26rem]:grid-cols-2">
           <Row
             icon={MapPin}
-            label="Across the stage"
+            label={t.studio.stance.acrossStage}
             value={+pose.x.toFixed(2)}
             min={-2.6}
             max={2.6}
@@ -126,7 +120,7 @@ export default function StanceEditor({
           />
           <Row
             icon={MapPin}
-            label="Towards the audience"
+            label={t.studio.stance.towardsAudience}
             value={+pose.z.toFixed(2)}
             min={-2.6}
             max={2.6}
@@ -135,7 +129,7 @@ export default function StanceEditor({
           />
           <Row
             icon={RotateCw}
-            label="Which way facing"
+            label={t.studio.stance.whichWayFacing}
             value={Math.round(pose.facing)}
             min={-180}
             max={180}
@@ -144,7 +138,7 @@ export default function StanceEditor({
           />
           <Row
             icon={Ruler}
-            label="How low the hips are"
+            label={t.studio.stance.hipHeight}
             value={+pose.hipY.toFixed(2)}
             min={0.55}
             max={1.25}
@@ -156,7 +150,7 @@ export default function StanceEditor({
         <div className="grid gap-5 @[26rem]:grid-cols-2">
           <Row
             icon={Compass}
-            label="Which way round"
+            label={t.studio.stance.whichWayRound}
             value={Math.round(az)}
             min={-180}
             max={180}
@@ -165,7 +159,7 @@ export default function StanceEditor({
           />
           <Row
             icon={MoveVertical}
-            label="How high"
+            label={t.studio.stance.howHigh}
             value={Math.round(el)}
             min={-90}
             max={90}
@@ -174,14 +168,8 @@ export default function StanceEditor({
           />
           {ew && (
             <p className="text-muted-foreground flex items-center gap-1 font-mono text-[0.85rem] @[26rem]:col-span-2">
-              Eshkol-Wachman: {ew.v.toFixed(1)} / {ew.h.toFixed(1)}
-              <InfoTip title="What those two numbers mean" side="top">
-                <p>
-                  This is the same aim written the way Eshkol-Wachman writes it: height first (0 straight down, 4
-                  straight up), then which way round (each unit is 45°).
-                </p>
-                <p>It is the same pair of angles as the two sliders above — just counted in eighths of a turn.</p>
-              </InfoTip>
+              {t.studio.stance.ewLine} {ew.v.toFixed(1)} / {ew.h.toFixed(1)}
+              <InfoTip title={t.studio.stance.ewTitle} side="top">{t.studio.stance.ewInfo}</InfoTip>
             </p>
           )}
         </div>

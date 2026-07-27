@@ -1,12 +1,11 @@
-import { DIRS, type DirKey, type Level } from "@/lib/notation";
+"use client";
+
+import { type DirKey, type Level } from "@/lib/notation";
+import { useCopy } from "@/components/locale-provider";
 import { HatchPattern, LabanGlyph } from "@/components/notation/glyphs";
 
 const SHAPES: DirKey[] = ["forward", "rf", "right", "rb", "back", "lb", "left", "lf", "place"];
-const SHADES: { level: Level; label: string }[] = [
-  { level: "high", label: "high" },
-  { level: "middle", label: "middle" },
-  { level: "low", label: "low" },
-];
+const SHADES: Level[] = ["high", "middle", "low"];
 
 function Specimen({ dir, level, caption }: { dir: DirKey; level: Level; caption: string }) {
   return (
@@ -39,27 +38,25 @@ function Specimen({ dir, level, caption }: { dir: DirKey; level: Level; caption:
  * position and length.
  */
 export default function LabanLegend() {
+  const t = useCopy();
   return (
     <div className="grid gap-8 md:grid-cols-[1.6fr_1fr]">
       <div className="space-y-3">
-        <p className="text-[0.8rem] font-medium tracking-wide uppercase">Rule 1 — the shape is the direction</p>
+        <p className="text-[0.8rem] font-medium tracking-wide uppercase">{t.laban.rule1}</p>
         <div className="flex flex-wrap gap-x-5 gap-y-4">
           {SHAPES.map((d) => (
-            <Specimen key={d} dir={d} level="middle" caption={DIRS[d].label} />
+            <Specimen key={d} dir={d} level="middle" caption={t.dirs[d]} />
           ))}
         </div>
       </div>
       <div className="space-y-3">
-        <p className="text-[0.8rem] font-medium tracking-wide uppercase">Rule 2 — the fill is the level</p>
+        <p className="text-[0.8rem] font-medium tracking-wide uppercase">{t.laban.rule2}</p>
         <div className="flex flex-wrap gap-x-5 gap-y-4">
-          {SHADES.map((s) => (
-            <Specimen key={s.level} dir="forward" level={s.level} caption={s.label} />
+          {SHADES.map((lv) => (
+            <Specimen key={lv} dir="forward" level={lv} caption={t.levels[lv]} />
           ))}
         </div>
-        <p className="text-muted-foreground text-[0.9rem] leading-relaxed">
-          Hatched is high, a dot is middle, solid black is low. A symbol’s <em>length</em> along the staff is how long
-          the movement takes.
-        </p>
+        <p className="text-muted-foreground text-[0.9rem] leading-relaxed">{t.laban.legendNote}</p>
       </div>
     </div>
   );
